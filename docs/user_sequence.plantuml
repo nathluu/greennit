@@ -1,0 +1,16 @@
+@startuml greennit
+actor "User" as usr
+participant "Greennit\nFrontend" as gf
+participant "Greennit\nBackend" as gb
+database "db" as db
+database "elasticsearch" as elastic
+==User flows==
+usr->gf++: Register request
+gf->gb++: Register
+gb->db++: Create account
+return Done
+gb->gb: Send activation\nemail
+return
+return
+==Community flows==
+@enduml
