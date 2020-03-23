@@ -10,6 +10,12 @@ type (
 	}
 )
 
+func NewHandler(srv service) *Handler {
+	return &Handler{
+		srv: srv,
+	}
+}
+
 func (h *Handler) Auth() {
 	h.srv.Auth()
 }

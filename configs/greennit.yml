@@ -1,0 +1,18 @@
+#log_level: "debug"
+#
+
+http_server:
+  address: 127.0.0.1
+  port: 9000
+  write_timeout: 10s
+  read_timeout: 10s
+  read_header_timeout: 10s
+  shutdown_timeout: 20s
+
+mongodb:
+  addresses: 127.0.0.1:27017
+  database: greennit
+  username: gadmin01
+  password: p@ssw0rd
+  timeout: 10s
+

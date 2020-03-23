@@ -48,7 +48,7 @@ func ListenAndServe(conf Config, router http.Handler) {
 
 	ctx, cancel := context.WithTimeout(context.Background(), conf.ShutdownTimeout)
 	defer cancel()
-	log.Infof("shutting down http srv...")
+	log.Infof("shutting down HTTP server...")
 	if err := srv.Shutdown(ctx); err != nil {
 		log.Panicf("http srv shutdown with error: %s", err)
 	}

@@ -6,11 +6,11 @@ import (
 
 type (
 	Logger interface {
-		// Infof print info with format.
-		Infof(format string, v ...interface{})
-
 		// Debugf print debug with format.
 		Debugf(format string, v ...interface{})
+
+		// Infof print info with format.
+		Infof(format string, v ...interface{})
 
 		// Warnf print warning with format.
 		Warnf(format string, v ...interface{})
@@ -21,11 +21,11 @@ type (
 		// Panicf panic with format.
 		Panicf(format string, v ...interface{})
 
-		// Info print info.
-		Info(v ...interface{})
-
 		// Debug print debug.
 		Debug(v ...interface{})
+
+		// Info print info.
+		Info(v ...interface{})
 
 		// Warn print warning.
 		Warn(v ...interface{})
@@ -98,14 +98,14 @@ func FromContext(ctx context.Context) Logger {
 	return Root()
 }
 
-// Infof print info with format.
-func Infof(format string, v ...interface{}) {
-	Root().Infof(format, v...)
-}
-
 // Debugf print debug with format.
 func Debugf(format string, v ...interface{}) {
 	Root().Debugf(format, v...)
+}
+
+// Infof print info with format.
+func Infof(format string, v ...interface{}) {
+	Root().Infof(format, v...)
 }
 
 // Warnf print warning with format.
@@ -121,6 +121,16 @@ func Errorf(format string, v ...interface{}) {
 // Panicf panic with format.
 func Panicf(format string, v ...interface{}) {
 	Root().Panicf(format, v...)
+}
+
+// Debug print debug message.
+func Debug(v ...interface{}) {
+	Root().Debug(v...)
+}
+
+// Info print info message.
+func Info(v ...interface{}) {
+	Root().Info(v...)
 }
 
 // WithFields return a new logger entry with fields
