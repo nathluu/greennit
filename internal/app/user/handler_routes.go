@@ -3,8 +3,8 @@ package user
 import (
 	"net/http"
 
-	"github.com/pthethanh/robusta/internal/app/auth"
-	"github.com/pthethanh/robusta/internal/pkg/http/router"
+	"github.com/nathluu/greennit/internal/app/auth"
+	"github.com/nathluu/greennit/internal/pkg/http/router"
 )
 
 func (h *Handler) Routes() []router.Route {

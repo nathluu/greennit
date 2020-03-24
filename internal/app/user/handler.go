@@ -1,22 +1,21 @@
 package user
 
 import (
-	"context"
-	"encoding/json"
 	"net/http"
 
-	"github.com/pthethanh/robusta/internal/app/status"
-	"github.com/pthethanh/robusta/internal/app/types"
-	"github.com/pthethanh/robusta/internal/pkg/http/respond"
+	"github.com/labstack/echo"
+	"github.com/nathluu/greennit/internal/app/types"
+	"github.com/nathluu/greennit/internal/pkg/log"
 )
 
 type (
 	service interface {
-		Register(ctx context.Context, req *types.RegisterRequest) (*types.User, error)
-		FindAll(ctx context.Context) ([]*types.UserInfo, error)
-		GenerateResetPasswordToken(ctx context.Context, mail string) (string, error)
-		ResetPassword(ctx context.Context, r ResetPasswordRequest) error
+		Register(ctx echo.Context, req *types.RegisterRequest) (*types.User, error)
+		FindAll(ctx echo.Context) ([]*types.UserInfo, error)
+		GenerateResetPasswordToken(ctx echo.Context, mail string) (string, error)
+		ResetPassword(ctx echo.Context, r ResetPasswordRequest) error
 	}
+
 	Handler struct {
 		srv service
 	}
@@ -28,60 +27,54 @@ func NewHandler(srv service) *Handler {
 	}
 }
 
-func (h *Handler) Register(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) Register(ctx echo.Context) error {
 	var req types.RegisterRequest
-	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		respond.Error(w, err, http.StatusBadRequest)
-		return
+	if err := ctx.Bind(&req); err != nil {
+		log.Errorf("register request binding failed, error: %v\n", err)
+		return ctx.NoContent(http.StatusBadRequest)
 	}
-	defer r.Body.Close()
-	user, err := h.srv.Register(r.Context(), &req)
+
+	user, err := h.srv.Register(ctx, &req)
 	if err != nil {
-		respond.Error(w, err, http.StatusInternalServerError)
-		return
+		return ctx.NoContent(http.StatusInternalServerError)
 	}
-	respond.JSON(w, http.StatusOK, types.BaseResponse{
-		Data: user,
-	})
+
+	return ctx.JSON(http.StatusOK, user)
 }
 
-func (h *Handler) FindAll(w http.ResponseWriter, r *http.Request) {
-	users, err := h.srv.FindAll(r.Context())
+func (h *Handler) FindAll(ctx echo.Context) error {
+	users, err := h.srv.FindAll(ctx)
 	if err != nil {
-		respond.Error(w, err, http.StatusInternalServerError)
-		return
+		return ctx.NoContent(http.StatusInternalServerError)
 	}
-	respond.JSON(w, http.StatusOK, types.BaseResponse{
-		Data: users,
-	})
+
+	return ctx.JSON(http.StatusOK, users)
 }
 
-func (h *Handler) GenerateResetPasswordToken(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) GenerateResetPasswordToken(ctx echo.Context) error {
 	var req GenerateResetPasswordTokenRequest
-	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		respond.Error(w, err, http.StatusBadRequest)
-		return
+	if err := ctx.Bind(&req); err != nil {
+		return ctx.NoContent(http.StatusBadRequest)
 	}
-	defer r.Body.Close()
-	_, err := h.srv.GenerateResetPasswordToken(r.Context(), req.Email)
+
+	_, err := h.srv.GenerateResetPasswordToken(ctx, req.Email)
 	if err != nil {
-		respond.Error(w, err, http.StatusInternalServerError)
-		return
+		return ctx.NoContent(http.StatusInternalServerError)
 	}
-	respond.JSON(w, http.StatusOK, status.Success())
+
+	return ctx.NoContent(http.StatusOK)
 }
 
-func (h *Handler) ResetPassword(w http.ResponseWriter, r *http.Request) {
+func (h *Handler) ResetPassword(ctx echo.Context) error {
 	var req ResetPasswordRequest
-	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		respond.Error(w, err, http.StatusBadRequest)
-		return
+	if err := ctx.Bind(&req); err != nil {
+		return ctx.NoContent(http.StatusBadRequest)
 	}
-	defer r.Body.Close()
-	err := h.srv.ResetPassword(r.Context(), req)
+
+	err := h.srv.ResetPassword(ctx, req)
 	if err != nil {
-		respond.Error(w, err, http.StatusInternalServerError)
-		return
+		return ctx.NoContent(http.StatusInternalServerError)
 	}
-	respond.JSON(w, http.StatusOK, status.Success())
+
+	return ctx.NoContent(http.StatusOK)
 }
